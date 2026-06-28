@@ -3,6 +3,15 @@ import { Send, Eye } from 'lucide-react'
 import katex from 'katex'
 import { useChatSender } from '../hooks/useChatSender'
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export default function LatexTab() {
   const [latex, setLatex] = useState('')
   const { loading, send } = useChatSender()
@@ -19,7 +28,7 @@ export default function LatexTab() {
         if (part.startsWith('$') && part.endsWith('$')) {
           return katex.renderToString(part.slice(1, -1).trim(), { throwOnError: false })
         }
-        return `<span>${part}</span>`
+        return `<span>${escapeHtml(part)}</span>`
       }).join('')
       previewRef.current.innerHTML = html
     } catch {

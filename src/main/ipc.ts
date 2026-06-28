@@ -79,6 +79,12 @@ function cancelForSender(sender: Electron.WebContents): void {
   }
 }
 
+function clearForSender(sender: Electron.WebContents, ctrl: AbortController): void {
+  if (activeControllers.get(sender.id) === ctrl) {
+    activeControllers.delete(sender.id)
+  }
+}
+
 function openAICompat(endpoint: string) {
   return {
     endpoint,
@@ -211,12 +217,14 @@ async function streamChat(payload: ChatPayload, sender: Electron.WebContents): P
           continue
         }
         sender.send('chat:error', msg)
+        clearForSender(sender, ctrl)
         return
       }
 
       const reader = response.body?.getReader()
       if (!reader) {
         sender.send('chat:error', '无法读取响应流')
+        clearForSender(sender, ctrl)
         return
       }
 
@@ -267,10 +275,12 @@ async function streamChat(payload: ChatPayload, sender: Electron.WebContents): P
       }
 
       sender.send('chat:done', usageRef.lastUsage)
+      clearForSender(sender, ctrl)
       return
     } catch (e) {
       if ((e as Error).name === 'AbortError') {
         sender.send('chat:done')
+        clearForSender(sender, ctrl)
         return
       }
       lastError = e as Error
@@ -281,6 +291,7 @@ async function streamChat(payload: ChatPayload, sender: Electron.WebContents): P
   }
 
   sender.send('chat:error', `网络错误: ${lastError?.message || '未知错误'}`)
+  clearForSender(sender, ctrl)
 }
 
 export function registerIpcHandlers(): void {

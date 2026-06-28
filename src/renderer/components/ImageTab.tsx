@@ -4,9 +4,11 @@ import { useChatStore } from '../store/chat'
 import { useChatSender } from '../hooks/useChatSender'
 
 function resizeImage(file: File): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image()
+    const objectUrl = URL.createObjectURL(file)
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
       const maxDim = 2048
       let { width, height } = img
       if (width > maxDim || height > maxDim) {
@@ -21,7 +23,11 @@ function resizeImage(file: File): Promise<string> {
       ctx.drawImage(img, 0, 0, width, height)
       resolve(canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.85))
     }
-    img.src = URL.createObjectURL(file)
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl)
+      reject(new Error('Failed to load image'))
+    }
+    img.src = objectUrl
   })
 }
 
@@ -34,8 +40,10 @@ export default function ImageTab() {
 
   const handleFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return
-    const b64 = await resizeImage(file)
-    setImageBase64(b64)
+    try {
+      const b64 = await resizeImage(file)
+      setImageBase64(b64)
+    } catch {}
   }, [setImageBase64])
 
   const handleDrop = useCallback((e: React.DragEvent) => {

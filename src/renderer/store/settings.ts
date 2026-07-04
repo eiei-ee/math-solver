@@ -14,9 +14,17 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   loaded: false,
 
   load: async () => {
-    if (!window.electronAPI) return
-    const s = await window.electronAPI.getSettings()
-    if (s) set({ ...s, loaded: true })
+    if (!window.electronAPI) {
+      set({ loaded: true })
+      return
+    }
+    try {
+      const s = await window.electronAPI.getSettings()
+      if (s) set({ ...s, loaded: true })
+      else set({ loaded: true })
+    } catch {
+      set({ loaded: true })
+    }
   },
 
   save: async (partial) => {

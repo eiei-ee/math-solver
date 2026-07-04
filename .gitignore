@@ -1,6 +1,5 @@
 node_modules
 dist
 out
+.impeccable
 *.log
-.impeccable/
-**/report_unpacked/

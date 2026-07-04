@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
+import { Settings } from 'lucide-react'
 import InputPanel from './components/InputPanel'
 import AnswerPanel from './components/AnswerPanel'
 import SettingsDialog from './components/SettingsDialog'
 import { useSettingsStore } from './store/settings'
-import { Settings } from 'lucide-react'
 
 export default function App() {
   const [showSettings, setShowSettings] = useState(false)
   const loadSettings = useSettingsStore(s => s.load)
 
-  useEffect(() => { loadSettings() }, [])
+  useEffect(() => {
+    loadSettings()
+  }, [loadSettings])
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Toolbar */}
       <header className="h-12 border-b border-gray-800 flex items-center justify-between px-4 shrink-0">
         <h1 className="text-sm font-medium text-gray-300">数学题解答助手</h1>
         <button
@@ -25,7 +26,6 @@ export default function App() {
         </button>
       </header>
 
-      {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
         <InputPanel />
         <AnswerPanel />

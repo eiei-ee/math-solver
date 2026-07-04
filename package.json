@@ -1,15 +1,16 @@
 {
   "name": "math-solver",
   "version": "1.0.0",
-  "description": "基于AI大模型的数学题解答助手",
+  "description": "基于 AI 大模型的数学题解答助手",
+  "author": "math-solver",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "electron-vite build && electron-builder",
+    "build": "electron-vite build && electron-builder --dir -c.win.signAndEditExecutable=false",
+    "build:installer": "electron-vite build && electron-builder",
     "preview": "electron-vite preview"
   },
   "dependencies": {
-    "docx": "^9.7.1",
     "katex": "^0.16.11",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",

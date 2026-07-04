@@ -1,25 +1,23 @@
 import { useState } from 'react'
 import { Send } from 'lucide-react'
-import { useChatSender } from '../hooks/useChatSender'
+import { useChatSubmit } from '../hooks/useChatSubmit'
 
 export default function TextTab() {
   const [text, setText] = useState('')
-  const { loading, send } = useChatSender()
+  const { loading, submitChat } = useChatSubmit()
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmed = text.trim()
-    if (!trimmed) return
-    setText('')
-    send(trimmed)
+    await submitChat({ content: trimmed, onSubmitted: () => setText('') })
   }
 
   return (
     <div className="flex-1 flex flex-col p-4">
       <textarea
         value={text}
-        onChange={e => setText(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSubmit()
+        onChange={event => setText(event.target.value)}
+        onKeyDown={event => {
+          if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) handleSubmit()
         }}
         placeholder="输入数学题目... (Ctrl+Enter 发送)"
         className="flex-1 w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-blue-500 placeholder:text-gray-600"

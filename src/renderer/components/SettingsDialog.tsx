@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
-import { useSettingsStore } from '../store/settings'
 import { providers } from '../api/registry'
+import { useSettingsStore } from '../store/settings'
 
 export default function SettingsDialog({ onClose }: { onClose: () => void }) {
   const { provider, apiKey, model, loaded, load, save } = useSettingsStore()
@@ -10,9 +10,9 @@ export default function SettingsDialog({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (!loaded) load()
     else setForm({ provider, apiKey, model })
-  }, [loaded])
+  }, [loaded, load, provider, apiKey, model])
 
-  const currentProvider = providers.find(p => p.id === form.provider)
+  const currentProvider = providers.find(item => item.id === form.provider)
 
   const handleSave = () => {
     save(form)
@@ -24,51 +24,48 @@ export default function SettingsDialog({ onClose }: { onClose: () => void }) {
       <div className="bg-gray-900 border border-gray-700 rounded-xl w-[420px] shadow-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
           <h2 className="text-sm font-semibold">API 设置</h2>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-800 text-gray-400">
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-800 text-gray-400" title="关闭">
             <X size={16} />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
-          {/* Provider */}
           <div>
             <label className="block text-xs text-gray-400 mb-1.5">服务商</label>
             <select
               value={form.provider}
-              onChange={e => {
-                const p = providers.find(x => x.id === e.target.value)
-                setForm({ ...form, provider: e.target.value, model: p?.models[0]?.id ?? '' })
+              onChange={event => {
+                const selectedProvider = providers.find(item => item.id === event.target.value)
+                setForm({ ...form, provider: event.target.value, model: selectedProvider?.models[0]?.id ?? '' })
               }}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
             >
-              {providers.map(p => (
-                <option key={p.id} value={p.id}>{p.label}</option>
+              {providers.map(item => (
+                <option key={item.id} value={item.id}>{item.label}</option>
               ))}
             </select>
           </div>
 
-          {/* API Key */}
           <div>
             <label className="block text-xs text-gray-400 mb-1.5">API Key</label>
             <input
               type="password"
               value={form.apiKey}
-              onChange={e => setForm({ ...form, apiKey: e.target.value })}
+              onChange={event => setForm({ ...form, apiKey: event.target.value })}
               placeholder="输入你的 API Key..."
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
             />
           </div>
 
-          {/* Model */}
           <div>
             <label className="block text-xs text-gray-400 mb-1.5">模型</label>
             <select
               value={form.model}
-              onChange={e => setForm({ ...form, model: e.target.value })}
+              onChange={event => setForm({ ...form, model: event.target.value })}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
             >
-              {currentProvider?.models.map(m => (
-                <option key={m.id} value={m.id}>{m.label}</option>
+              {currentProvider?.models.map(item => (
+                <option key={item.id} value={item.id}>{item.label}</option>
               ))}
             </select>
           </div>

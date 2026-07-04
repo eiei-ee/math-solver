@@ -1,20 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Send, Eye } from 'lucide-react'
+import { Eye, Send } from 'lucide-react'
 import katex from 'katex'
-import { useChatSender } from '../hooks/useChatSender'
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
+import { useChatSubmit } from '../hooks/useChatSubmit'
 
 export default function LatexTab() {
   const [latex, setLatex] = useState('')
-  const { loading, send } = useChatSender()
+  const { loading, submitChat } = useChatSubmit()
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -28,28 +19,26 @@ export default function LatexTab() {
         if (part.startsWith('$') && part.endsWith('$')) {
           return katex.renderToString(part.slice(1, -1).trim(), { throwOnError: false })
         }
-        return `<span>${escapeHtml(part)}</span>`
+        return `<span>${part}</span>`
       }).join('')
       previewRef.current.innerHTML = html
     } catch {
-      // ignore render errors
+      // KaTeX render errors should not block editing.
     }
   }, [latex])
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmed = latex.trim()
-    if (!trimmed) return
-    setLatex('')
-    send(trimmed)
+    await submitChat({ content: trimmed, onSubmitted: () => setLatex('') })
   }
 
   return (
     <div className="flex-1 flex flex-col p-4">
       <textarea
         value={latex}
-        onChange={e => setLatex(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSubmit()
+        onChange={event => setLatex(event.target.value)}
+        onKeyDown={event => {
+          if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) handleSubmit()
         }}
         placeholder={'输入 LaTeX 公式或题目...\n\n行内公式: $E=mc^2$\n独立公式: $$\\int_0^\\infty e^{-x} dx$$\n\nCtrl+Enter 发送'}
         className="flex-1 w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-blue-500 placeholder:text-gray-600 font-mono"

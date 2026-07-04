@@ -16,24 +16,22 @@ export default function InputPanel() {
 
   return (
     <div className="w-[420px] shrink-0 border-r border-gray-800 flex flex-col">
-      {/* Tabs */}
       <div className="flex border-b border-gray-800">
-        {tabs.map(t => (
+        {tabs.map(tab => (
           <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
             className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-              activeTab === t.id
+              activeTab === tab.id
                 ? 'text-blue-400 border-b-2 border-blue-400 bg-blue-400/5'
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
-            {t.label}
+            {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {activeTab === 'text' && <TextTab />}
         {activeTab === 'image' && <ImageTab />}

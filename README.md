@@ -1,8 +1,12 @@
-﻿# AI 数学题解题助手
+# AI 数学题解题助手
 
 基于大语言模型的数学题解答桌面应用。用户可以通过文字、图片或 LaTeX 公式输入数学题，应用调用大模型 API 生成中文逐步推导过程，并使用 Markdown + KaTeX 渲染数学公式，帮助用户更清晰地理解解题思路。
 
 > 项目定位：AI 产品 Demo / AIGC 教育应用 / 大模型应用开发课程设计
+
+## 维护状态
+
+本仓保留 Electron 历史基线和旧版下载。当前主维护版本为 [math-solver-unified](https://github.com/eiei-ee/math-solver-unified)，新用户请优先查看该仓的说明和 Releases。本仓的旧版本不等同于 unified 当前版本。
 
 ## 项目背景
 
@@ -192,3 +196,7 @@ dist/
 ## 简历关键词
 
 AI 产品 Demo、AIGC 教育应用、多模态输入、大模型 API、Prompt 设计、流式响应、公式渲染、Electron 桌面应用、React、TypeScript。
+
+## 权利说明
+
+暂不授予开源许可证，保留权利；详见 [RIGHTS.md](RIGHTS.md)。
